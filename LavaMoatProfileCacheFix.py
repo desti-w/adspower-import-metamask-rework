@@ -1,6 +1,5 @@
 import time
 from termcolor import cprint
-import platform
 import traceback
 
 
@@ -40,7 +39,13 @@ def runtime_lavamoat_cache_editor(path):
 if __name__ == '__main__':
 
     # Change this path according to the instructions====================================================================
-    user_ID = 'user_he3t5p'
+    '''
+    Put your user id from the Adspower settings here.
+    Should be something like this:
+    user_ID = 'user_******'
+    Adspower -> Setting -> My Account -> Copy the User ID
+    '''
+    user_ID = 'YOUR_USER_ID'
 
     '''
     For Windows add path from setting without slash at the end. The path should be something like this:

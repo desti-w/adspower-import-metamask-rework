@@ -30,13 +30,13 @@ ___
 Этот фикс отключает LavaMoat путем изменения переменной **scuttleGlobalThis** в файле run-time.js
 
 
-В фиксе присутствую 2 основных файла:
+В фиксе присутствуют 2 основных файла:
 * LavaMoatExtFix.py
 * LavaMoatProfileCacheFix.py
 
 
 
-**LavaMoatExtFix.py** - предназначен для изменения файла run-time.js в условном "корневом" расширения Metamask, скаченным Adspower.
+**LavaMoatExtFix.py** - предназначен для изменения файла run-time.js в условном "корневом" каталоге расширения Metamask, скаченным Adspower. Позваляет создавать профили с **отключенным** LavaMoat.
 
 
 **LavaMoatProfileCacheFix.py** - предназначен для изменения файла run-time.js в уже созданном профиле.
@@ -56,32 +56,44 @@ ___
     path_from_ads_settings = r"/Users/YOUR_NICKNAME/Library/Application Support/adspower_global/cwd_global/source"
 
 
+В файле LavaMoatProfileCacheFix.py обязательно измените переменную user_ID:
+* Зайдите в Adspower -> Перейдите в настройки -> Мой Аккаунт -> Скопируйте ID пользователя
+
+```
+user_ID = 'YOUR_USER_ID'
+```
+
+###
+
 **Запуск LavaMoatExtFix.py**
 1. Измените путь до папки
 2. Запустить скрипт.
 * При успешном применении вы увидите:
 
+```
+Фикс применен/fix applied.
+```
 
-    Фикс применен/fix applied.
 
-
-**Запуск LavaMoatExtFix.py**
+**Запуск LavaMoatProfileCacheFix.py**
 1. Измените путь до папки
-2. Добавить id профилей в файл id_users.txt (каждый с новой строки)
-3. Запустить скрипт.
+2. Измените переменную user_ID
+3. Добавить id профилей в файл id_users.txt (каждый с новой строки)
+4. Запустить скрипт.
 
 * При успешном применении вы увидите:
 
+```
+1. < {ads_id} >  fixed              # Изменения применены 
 
-    1. < {ads_id} >  fixed              # Изменения применены 
-
-    2. < {ads_id} >  already fixed'     # Изменения уже были применены 
+2. < {ads_id} >  already fixed'     # Изменения уже были применены 
+```
 
 ___
 
 
 
-### Исктрукция для скрипта импорта
+### Исктрукция для скрипта импорта :rocket:
 1. Экспортируй ids из adspower со своих профилей
 2. Добавь эти ids в файл id_users.txt (каждый с новой строки)
 3. Добавь сид-фразы от заранее созданных кошельков в файл seeds.txt (каждый с новой строки)

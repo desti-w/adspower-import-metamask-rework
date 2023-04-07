@@ -1,6 +1,5 @@
 import time
 from termcolor import cprint
-import platform
 import traceback
 
 
@@ -21,7 +20,7 @@ if __name__ == '__main__':
     # Change this path according to the instructions====================================================================
     """
     For Windows add path from setting without slash at the end. The path should be something like this:
-    path_from_ads_settings = r"H:\.ADSPOWER_GLOBAL" 
+    path_from_ads_settings = r"C:\.ADSPOWER_GLOBAL" 
     Depending on the location of the folder on your disk.
 
     For macOS add path from setting without slash at the end. The path should be something like this:

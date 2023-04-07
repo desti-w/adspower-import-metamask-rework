@@ -9,7 +9,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import WebDriverException
 from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import NoSuchElementException
 from termcolor import cprint
 import pyperclip
 import platform
