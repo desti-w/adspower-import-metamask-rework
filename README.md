@@ -3,12 +3,12 @@
 ![Supports](https://img.shields.io/badge/Python-Windows%20%7C%20MacOS%20%7C%20Linux-brightgreen?style=flat-square)
 ![Metamask](https://img.shields.io/badge/Metamask-10.26.2-orange?style=flat-square)
 ___
-#### Изменения 07.04 commit:
+#### Изменения 17.04 commit:
 
-* Изменена структура скрипта
-* Добавлен обход защиты LavaMoat
-* Добавлена функция смены кошелька через forgot pass
-* Добавлена функция подготовки профилей для ручного управления
+* Исправилены некоторые баги, добавилены новые
+* Добавлены сети Zksync Era и Arbitrum Nova
+* Добавлена проверка наличия папки Cache
+* Ввод переменной user_ID отныне не требуется 
 ___
 
 
@@ -56,13 +56,6 @@ ___
     path_from_ads_settings = r"/Users/YOUR_NICKNAME/Library/Application Support/adspower_global/cwd_global/source"
 
 
-В файле LavaMoatProfileCacheFix.py обязательно измените переменную user_ID:
-* Зайдите в Adspower -> Перейдите в настройки -> Мой Аккаунт -> Скопируйте ID пользователя
-
-```
-user_ID = 'YOUR_USER_ID'
-```
-
 ###
 
 **Запуск LavaMoatExtFix.py**
@@ -77,23 +70,28 @@ user_ID = 'YOUR_USER_ID'
 
 **Запуск LavaMoatProfileCacheFix.py**
 1. Измените путь до папки
-2. Измените переменную user_ID
-3. Добавить id профилей в файл id_users.txt (каждый с новой строки)
-4. Запустить скрипт.
+2. Добавить id профилей в файл id_users.txt (каждый с новой строки)
+3. Запустить скрипт.
 
 * При успешном применении вы увидите:
 
 ```
 1. < {ads_id} >  fixed              # Изменения применены 
 
-2. < {ads_id} >  already fixed'     # Изменения уже были применены 
+2. < {ads_id} >  already fixed      # Изменения уже были применены 
 ```
-
+* Возможный исход:
+```
+3. < {ads_id} >  cache not found or wrong id 
+```
+Отсутвие кэша профиля или неверный ID профиля. Данный сценарий присущ новосозданным профилям, которые ниразу не запускались.
+В этом нет ничего страшного, если ID профиля верен. Можете запускать main.py .
+ 
 ___
 
 
 
-### Исктрукция для скрипта импорта :rocket:
+### Исктрукция для скрипта импорта :man_technologist: :rocket:
 1. Экспортируй ids из adspower со своих профилей
 2. Добавь эти ids в файл id_users.txt (каждый с новой строки)
 3. Добавь сид-фразы от заранее созданных кошельков в файл seeds.txt (каждый с новой строки)
@@ -110,7 +108,12 @@ ___
 |  unlock_mode  |     1      | Режим предназначен для подготовки профилей к работе.   <br>Запускает профиль и входит в метамаск, при этом окно профиля закрываться не будет.   <br>Не требует заполнения файла seeds.txt |        
 
 
-###
+### Поддержка :heart:
+Btc   : bc1qwjv6rlkwhj3ft0ejzq8ntdcw455gfmzupstgte <br> 
+Eth   : 0xbF7534d0e8A048a6b621c7DA1db65b4b866718E4 <br>
+Arb   : 0xbF7534d0e8A048a6b621c7DA1db65b4b866718E4 <br>
+USDT &nbsp;trc20&nbsp;&nbsp; : &nbsp; TFyu4aPm8jHU68pZwJjSwN4r72X8hEvnV3 <br>
+BUSD &nbsp;bep20 : &nbsp; 0xbF7534d0e8A048a6b621c7DA1db65b4b866718E4 <br>
 
 ### Rework by *[Desti](https://t.me/ddest1)*
 #### Автор оригинального скрипта ***[Zaivanza](https://t.me/zaivanza)***

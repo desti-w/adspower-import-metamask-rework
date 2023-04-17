@@ -65,6 +65,7 @@ XPATH_INPUT_UNLOCK_PASS = '//*[@data-testid="unlock-password"]'
 XPATH_UNLOCK = '//*[@data-testid="unlock-submit"]'
 
 XPATH_INPUTS_MNEMONIC = '//*[@class="MuiInputBase-input MuiInput-input"]'
+XPATH_POPOVER_CLOSE = '//*[@data-testid="popover-close"]'
 
 
 networks = {
@@ -99,6 +100,22 @@ networks = {
         'symbol': 'MATIC',
         'explorer': 'https://polygonscan.com/',
     },
+
+    'Zksync Era': {
+        'net_name': 'zkSync Era Mainnet',
+        'rpc': 'https://mainnet.era.zksync.io',
+        'chain_id': 324,
+        'symbol': 'ETH',
+        'explorer': 'https://explorer.zksync.io/',
+    },
+
+    'Arbitrum Nova': {
+        'net_name': 'Arbitrum Nova',
+        'rpc': 'https://nova.arbitrum.io/rpc',
+        'chain_id': 42170,
+        'symbol': 'ETH',
+        'explorer': 'https://nova-explorer.arbitrum.io',
+    }
 }
 
 
@@ -125,7 +142,7 @@ def add_network(driver, name_network):
         # save
         while True:
             try:
-                time.sleep(.35)
+                time.sleep(.5)
                 clickOnXpath(driver, 3, XPATH_PONYATNO_BTN)  # Save button
                 break
             except:
@@ -133,10 +150,13 @@ def add_network(driver, name_network):
                 time.sleep(.2)
                 inputTextXpath(driver, 5, networks[name_network]['explorer'], f'{xpatch}[5]/label/input')
                 time.sleep(.2)
-        time.sleep(.3)
-        clickOnXpath(driver, 5, XPATH_PONYATNO_BTN)  # ponyatno btn
-        time.sleep(.5)
-    except:
+        try:
+            time.sleep(.3)
+            clickOnXpath(driver, 3.5, XPATH_POPOVER_CLOSE)  # krestik btn
+            time.sleep(.5)
+        except Exception:
+            pass
+    except Exception:
         cprint(f'network < {name_network} > network not added', 'white')
 
 
@@ -177,6 +197,8 @@ def onboard_page(driver, seed, password):
     add_network(driver, 'Polygon')
     add_network(driver, 'Optimism')
     add_network(driver, 'Arbitrum')
+    add_network(driver, 'Zksync Era')
+    add_network(driver, 'Arbitrum Nova')
     # ==================================================================================================================
     # ##################################################################################################################
 
@@ -216,25 +238,35 @@ def main(zero, ads_id, seed, password, unlock_mode):
         try:
             # Отправка запроса на открытие профиля
             resp = requests.get(open_url).json()
+            time.sleep(.5)
         except requests.exceptions.ConnectionError:
             cprint(f'Adspower is not running.', 'red')
             sys.exit(0)
+        except requests.exceptions.JSONDecodeError:
+            cprint(f'Проверьте ваше подключение. Отключите VPN/Proxy используемые напрямую.', 'red')
+            sys.exit(0)
 
-        try:
-            chrome_driver = resp["data"]["webdriver"]
-            chrome_options = Options()
-            chrome_options.add_experimental_option("debuggerAddress", resp["data"]["ws"]["selenium"])
-            driver = webdriver.Chrome(service=Service(chrome_driver), options=chrome_options)
-        except KeyError:
-            cprint(f'{ads_id} = Profile opening error.', 'red')
-            # driver.quit()
-            requests.get(close_url)
-            return
-        except Exception:
-            cprint(f'{ads_id} = Adspower may not be running.', 'red')
-            driver.quit()
-            requests.get(close_url)
-            return
+        while True:
+            try:
+                chrome_driver = resp["data"]["webdriver"]
+                chrome_options = Options()
+                chrome_options.add_experimental_option("debuggerAddress", resp["data"]["ws"]["selenium"])
+                driver = webdriver.Chrome(service=Service(chrome_driver), options=chrome_options)
+                break
+            except KeyError:
+                # Перезапуск профиля для попытки устраниения ошибки открытия
+                try:
+                    requests.get(open_url).json()
+                    time.sleep(3)
+                    requests.get(close_url).json()
+                except Exception:
+                    cprint(f'{ads_id} - profile opening error', 'red')
+                    break
+            except Exception:
+                cprint(f'{ads_id} - profile opening error', 'red')
+                driver.quit()
+                requests.get(close_url)
+                break
 
         url = 'chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html'
 

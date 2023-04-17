@@ -1,5 +1,6 @@
-import time
+import time, os, sys
 from termcolor import cprint
+import glob
 import traceback
 
 
@@ -12,21 +13,34 @@ def line_control(file_txt):
             n_f1.writelines(non_empty_lines)
 
 
-def get_profile_cache_path(ads_id, user_ID, path_from_ads_settings):
+def cache_folder_exist():
+    path_to_cache = path_from_ads_settings + r"/cache"
+    if os.path.exists(path_to_cache):
+        pass
+    else:
+        cprint(f'Неверно указан путь в переменную "path_from_ads_settings"', 'red')
+        sys.exit(0)
 
-    user_ID = '_' + user_ID.split('_')[1]
-    path = fr'{path_from_ads_settings}/cache/{ads_id}{user_ID}/extensionCenter/3f78540a9170bc1d87c525f061d1dd0f/10.26.2_0/runtime-lavamoat.js'
+
+def get_profile_cache_path(ads_id, path_from_ads_settings):
+    folder_path = glob.glob(fr"{path_from_ads_settings}/cache/{ads_id}*")
+
+    if folder_path:
+        path_to_profile = folder_path[0].replace("\\", "/")
+        path = fr'{path_to_profile}/extensionCenter/3f78540a9170bc1d87c525f061d1dd0f/10.26.2_0/runtime-lavamoat.js'
+    else:
+        return 0
     return path
 
 
 def runtime_lavamoat_cache_editor(path):
 
-    with open(path, 'r') as read:
+    with open(path, 'r', encoding="utf-8") as read:
         lines = read.readlines()
 
     key_edt = False
     # Изменяет переменную scuttleGlobalThis на значение false
-    with open(path, 'w') as read:
+    with open(path, 'w', encoding="utf-8") as read:
         for line in lines:
             if line.startswith('    } = {"scuttleGlobalThis":true,"scuttleGlobalThisExceptions":["toString","getComputedStyle","addEventListener","removeEventListener","ShadowRoot","HTMLElement","Element","pageXOffset","pageYOffset","visualViewport","Reflect","Set","Object","navigator","harden","console","location","/cdc_[a-zA-Z0-9]+_[a-zA-Z]+/iu","performance","parseFloat","innerWidth","innerHeight","Symbol","Math","DOMRect","Number","Array","crypto","Function","Uint8Array","String","Promise","__SENTRY__","appState","extra","stateHooks","sentryHooks","sentry"]}'):
                 line = '    } = {"scuttleGlobalThis":false,"scuttleGlobalThisExceptions":["toString","getComputedStyle","addEventListener","removeEventListener","ShadowRoot","HTMLElement","Element","pageXOffset","pageYOffset","visualViewport","Reflect","Set","Object","navigator","harden","console","location","/cdc_[a-zA-Z0-9]+_[a-zA-Z]+/iu","performance","parseFloat","innerWidth","innerHeight","Symbol","Math","DOMRect","Number","Array","crypto","Function","Uint8Array","String","Promise","__SENTRY__","appState","extra","stateHooks","sentryHooks","sentry"]}'
@@ -40,14 +54,6 @@ if __name__ == '__main__':
 
     # Change this path according to the instructions====================================================================
     '''
-    Put your user id from the Adspower settings here.
-    Should be something like this:
-    user_ID = 'user_******'
-    Adspower -> Setting -> My Account -> Copy the User ID
-    '''
-    user_ID = 'YOUR_USER_ID'
-
-    '''
     For Windows add path from setting without slash at the end. The path should be something like this:
     path_from_ads_settings = r"C:\.ADSPOWER_GLOBAL" 
     Depending on the location of the folder on your disk.
@@ -57,8 +63,10 @@ if __name__ == '__main__':
     Depending on the location of the folder on your disk and your nickname.
     '''
 
-    path_from_ads_settings = r"C:\.ADSPOWER_GLOBAL"  # Add path WITHOUT SLASH AT THE END (ДОБАВИТЬ БЕЗ СЛЭША НА КОНЦЕ)
+    path_from_ads_settings = r"h:\.ADSPOWER_GLOBAL"  # Add path WITHOUT SLASH AT THE END (ДОБАВИТЬ БЕЗ СЛЭША НА КОНЦЕ)
     # ==================================================================================================================
+
+    cache_folder_exist()
 
     line_control("id_users.txt")
     with open("id_users.txt", "r") as f:
@@ -69,17 +77,20 @@ if __name__ == '__main__':
         i += 1
 
         try:
-            path = get_profile_cache_path(ads_id, user_ID, path_from_ads_settings)
+            path = get_profile_cache_path(ads_id, path_from_ads_settings)
+            if path == 0:
+                cprint(f'{i}. < {ads_id} >  cache not found or wrong id', 'yellow')
+                continue
             key_edt = runtime_lavamoat_cache_editor(path)
             if key_edt is True:
                 cprint(f'{i}. < {ads_id} >  fixed', 'green')
             elif key_edt is False:
-                cprint(f'{i}. < {ads_id} >  already fixed', 'White')
+                cprint(f'{i}. < {ads_id} >  already fixed', 'green')
 
         except FileNotFoundError:
             # traceback.print_exc()
             # time.sleep(.3)
-            cprint(f'{i}. < {ads_id} >  Не найден файл runtime-lavamoat.js', 'red')
+            cprint(f'{i}. < {ads_id} >  runtime-lavamoat.js not found', 'red')
 
         except Exception as ex:
             traceback.print_exc()
