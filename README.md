@@ -1,14 +1,14 @@
 # adspower-import-metamask-rework
 ![Python](https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue?style=flat-square)
-![Supports](https://img.shields.io/badge/Python-Windows%20%7C%20MacOS%20%7C%20Linux-brightgreen?style=flat-square)
+![Supports](https://img.shields.io/badge/Python-Windows%20%7C%20MacOS-brightgreen?style=flat-square)
 ![Metamask](https://img.shields.io/badge/Metamask-10.26.2-orange?style=flat-square)
 ___
-#### Изменения 17.04 commit:
+#### Изменения 22.04 commit:
 
-* Исправилены некоторые баги, добавилены новые
-* Добавлены сети Zksync Era и Arbitrum Nova
-* Добавлена проверка наличия папки Cache
-* Ввод переменной user_ID отныне не требуется 
+* Добавлены новые сети
+* Исправлены незначительные ошибки
+* Исправлен баг бесконечного цикла при добавлении сетей
+* Переменная path_from_ads_settings определяется автоматически
 ___
 
 
@@ -40,27 +40,10 @@ ___
 
 
 **LavaMoatProfileCacheFix.py** - предназначен для изменения файла run-time.js в уже созданном профиле.
-<br></br>
 
-Для корректного запуска фалов измените путь в переменной:
-
-    path_from_ads_settings = r"YOUR_PATH"
-Для **Windows**:
-
-    path_from_ads_settings = r"С:\.ADSPOWER_GLOBAL"     # Возжможна другая буква диска
-
-Для **MacOS**:
-    
-    # Вместо YOUR_NICKNAME ваша персональная папка
-
-    path_from_ads_settings = r"/Users/YOUR_NICKNAME/Library/Application Support/adspower_global/cwd_global/source"
-
-
-###
 
 **Запуск LavaMoatExtFix.py**
-1. Измените путь до папки
-2. Запустить скрипт.
+1. Запустите скрипт.
 * При успешном применении вы увидите:
 
 ```
@@ -69,9 +52,8 @@ ___
 
 
 **Запуск LavaMoatProfileCacheFix.py**
-1. Измените путь до папки
-2. Добавить id профилей в файл id_users.txt (каждый с новой строки)
-3. Запустить скрипт.
+1. Добавьте id профилей в файл id_users.txt (каждый с новой строки)
+2. Запустите скрипт.
 
 * При успешном применении вы увидите:
 
@@ -100,6 +82,7 @@ ___
 6. Запусти файл main.py
 
 
+
 **Возможные режимы работы:**
 
 |  Переменная   |  Значение  | Режим работы                                                                                                                                                                              |        
@@ -107,6 +90,11 @@ ___
 |  unlock_mode  |     0      | Импортирует сид-фразы в созданные профиля, если в профиле уже имеется авторизованный метамаск, он будет заменен на новый через fargot password.                                           |
 |  unlock_mode  |     1      | Режим предназначен для подготовки профилей к работе.   <br>Запускает профиль и входит в метамаск, при этом окно профиля закрываться не будет.   <br>Не требует заполнения файла seeds.txt |        
 
+### FAQ
+1. Если у вас не прогружается Metamask, попробуйте отключить/изменить прокси.
+2. Если у вас не прогружаются сети, попробуйте изменить rpc проблемной сети или отключить/изменить прокси.
+
+Если у вас что-то не получается или возникают ошибки, обратитесь к разработчику. Буду рад помочь :alien:	
 
 ### Поддержка :heart:
 Btc   : bc1qwjv6rlkwhj3ft0ejzq8ntdcw455gfmzupstgte <br> 

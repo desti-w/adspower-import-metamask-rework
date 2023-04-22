@@ -115,6 +115,40 @@ networks = {
         'chain_id': 42170,
         'symbol': 'ETH',
         'explorer': 'https://nova-explorer.arbitrum.io',
+    },
+
+    'Avalanche': {
+        'net_name': 'Avalanche Network C-Chain',
+        'rpc': 'https://api.avax.network/ext/bc/C/rpc',
+        # 'rpc': 'https://avalanche-mainnet.infura.io',
+        'chain_id': 43114,
+        'symbol': 'AVAX',
+        'explorer': 'https://snowtrace.io/',
+    },
+
+    'Gnosis Chain': {
+        'net_name': 'Gnosis Chain',
+        'rpc': 'https://rpc.gnosischain.com',
+        'chain_id': 100,
+        'symbol': 'xDai',
+        'explorer': 'https://blockscout.com/xdai/mainnet/',
+    },
+
+    'Fantom': {
+        'net_name': 'Fantom',
+        'rpc': 'https://rpc.ftm.tools/',
+        'chain_id': 250,
+        'symbol': 'FTM',
+        'explorer': 'https://ftmscan.com/',
+    },
+
+    'Aurora': {
+        'net_name': 'Aurora Mainnet',
+        'rpc': 'https://mainnet.aurora.dev',
+        # 'rpc': 'https://aurora-mainnet.infura.io',
+        'chain_id': 1313161554,
+        'symbol': 'ETH',
+        'explorer': 'https://explorer.aurora.dev/',
     }
 }
 
@@ -140,19 +174,26 @@ def add_network(driver, name_network):
         inputTextXpath(driver, 5, networks[name_network]['symbol'], f'{xpatch}[4]/label/input')    # currency_symbol
         inputTextXpath(driver, 5, networks[name_network]['explorer'], f'{xpatch}[5]/label/input')  # explorer_url
         # save
+        q = 0
         while True:
             try:
                 time.sleep(.5)
                 clickOnXpath(driver, 3, XPATH_PONYATNO_BTN)  # Save button
                 break
             except:
+                time.sleep(.5)
                 driver.find_element(By.XPATH, f'{xpatch}[5]/label/input').clear()
-                time.sleep(.2)
+                time.sleep(.5)
                 inputTextXpath(driver, 5, networks[name_network]['explorer'], f'{xpatch}[5]/label/input')
-                time.sleep(.2)
+                time.sleep(.5)
+                q += 1
+                if q >= 6:
+                    raise
         try:
-            time.sleep(.3)
-            clickOnXpath(driver, 3.5, XPATH_POPOVER_CLOSE)  # krestik btn
+            time.sleep(.8)
+            waitElementXpath(driver, 3, XPATH_POPOVER_CLOSE)  # krestik btn
+            time.sleep(.8)
+            clickOnXpath(driver, 3, XPATH_POPOVER_CLOSE)    # krestik btn click
             time.sleep(.5)
         except Exception:
             pass
@@ -186,8 +227,14 @@ def onboard_page(driver, seed, password):
     inputTextXpath(driver, 5, password, XPATH_INPUT_PASS_CNFRM)
     clickOnXpath(driver, 5, XPATH_INPUT_TERMS)                      # Terms checkbox
     clickOnXpath(driver, 5, XPATH_CREATE_NEW_WALLET)                # Import wallet btn
-    clickOnXpath(driver, 7, XPATH_ONBOARDING_DONE)                  # Got it button
-    clickOnXpath(driver, 7, XPATH_PIN_EXT_NEXT)                     # Next button
+
+    svg_spinner = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "lds-spinner")))
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located(svg_spinner))            # Waiting for svg_spinner to disappear
+
+    clickOnXpath(driver, 30, XPATH_ONBOARDING_DONE)                 # Got it button
+    clickOnXpath(driver, 30, XPATH_PIN_EXT_NEXT)                    # Next button
     clickOnXpath(driver, 7, XPATH_PIN_EXT_DONE)                     # Done button
 
     # =================================== if you don't need to add a networks, comment everything below ================
@@ -199,6 +246,10 @@ def onboard_page(driver, seed, password):
     add_network(driver, 'Arbitrum')
     add_network(driver, 'Zksync Era')
     add_network(driver, 'Arbitrum Nova')
+    add_network(driver, 'Avalanche')
+    add_network(driver, 'Gnosis Chain')
+    add_network(driver, 'Fantom')
+    add_network(driver, 'Aurora')
     # ==================================================================================================================
     # ##################################################################################################################
 
@@ -229,7 +280,7 @@ def mode_selector(driver):
 
 def main(zero, ads_id, seed, password, unlock_mode):
     try:
-        args1 = ["--disable-popup-blocking"]
+        args1 = ["--disable-popup-blocking", "--window-position=700,0"]
         args1 = str(args1).replace("'", '"')
 
         open_url = f"http://local.adspower.net:50325/api/v1/browser/start?user_id=" + ads_id + f"&launch_args={str(args1)}"

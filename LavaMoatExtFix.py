@@ -1,6 +1,30 @@
 import time
 from termcolor import cprint
 import traceback
+import os
+import string
+import platform
+import getpass
+
+
+def path_to_ads_folder():
+    # Определение ОС пользователя
+    if platform.system() == 'Darwin':
+        # Mac operating system
+        folder_name = "adspower_global/cwd_global/source"
+        username = getpass.getuser()
+        path = os.path.join("/Users/", username + "/Library/Application Support/", folder_name)
+        if os.path.exists(path):
+            return path
+
+    else:
+        # Other operating systems (Windows)
+        drives = [drive for drive in string.ascii_uppercase if os.path.exists(drive + ":")]
+        folder_name = ".ADSPOWER_GLOBAL"
+        for drive in drives:
+            path = drive + ":" + "\\" + folder_name
+            if os.path.exists(os.path.join(path)):
+                return path
 
 
 def runtime_lavamoat_editor(path):
@@ -17,21 +41,11 @@ def runtime_lavamoat_editor(path):
 
 if __name__ == '__main__':
 
-    # Change this path according to the instructions====================================================================
-    """
-    For Windows add path from setting without slash at the end. The path should be something like this:
-    path_from_ads_settings = r"C:\.ADSPOWER_GLOBAL" 
-    Depending on the location of the folder on your disk.
-
-    For macOS add path from setting without slash at the end. The path should be something like this:
-    path_from_ads_settings = r"/Users/YOUR_NICKNAME/Library/Application Support/adspower_global/cwd_global/source" 
-    Depending on the location of the folder on your disk and your nickname.
-    """
-
-    path_from_ads_settings = r"C:\.ADSPOWER_GLOBAL"  # Add path WITHOUT SLASH AT THE END (ДОБАВИТЬ БЕЗ СЛЭША НА КОНЦЕ)
-    # ==================================================================================================================
-
     try:
+        path_from_ads_settings = path_to_ads_folder()
+        if path_from_ads_settings is None:
+            raise FileNotFoundError
+
         path_to_js = fr'{path_from_ads_settings}/extension/19657/3f78540a9170bc1d87c525f061d1dd0f/10.26.2_0/runtime-lavamoat.js'
         runtime_lavamoat_editor(path_to_js)
         cprint(f'Фикс применен/fix applied', 'green')

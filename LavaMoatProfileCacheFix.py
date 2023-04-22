@@ -2,6 +2,10 @@ import time, os, sys
 from termcolor import cprint
 import glob
 import traceback
+import os
+import string
+import platform
+import getpass
 
 
 def line_control(file_txt):
@@ -13,13 +17,32 @@ def line_control(file_txt):
             n_f1.writelines(non_empty_lines)
 
 
+def path_to_ads_folder():
+    # Определение ОС пользователя
+    if platform.system() == 'Darwin':
+        # Mac operating system
+        folder_name = "adspower_global/cwd_global/source"
+        username = getpass.getuser()
+        path = os.path.join("/Users/", username + "/Library/Application Support/", folder_name)
+        if os.path.exists(path):
+            return path
+
+    else:
+        # Other operating systems (Windows)
+        drives = [drive for drive in string.ascii_uppercase if os.path.exists(drive + ":")]
+        folder_name = ".ADSPOWER_GLOBAL"
+        for drive in drives:
+            path = drive + ":" + "\\" + folder_name
+            if os.path.exists(os.path.join(path)):
+                return path
+
+
 def cache_folder_exist():
     path_to_cache = path_from_ads_settings + r"/cache"
     if os.path.exists(path_to_cache):
-        pass
+        return
     else:
-        cprint(f'Неверно указан путь в переменную "path_from_ads_settings"', 'red')
-        sys.exit(0)
+        return 0
 
 
 def get_profile_cache_path(ads_id, path_from_ads_settings):
@@ -52,21 +75,13 @@ def runtime_lavamoat_cache_editor(path):
 
 if __name__ == '__main__':
 
-    # Change this path according to the instructions====================================================================
-    '''
-    For Windows add path from setting without slash at the end. The path should be something like this:
-    path_from_ads_settings = r"C:\.ADSPOWER_GLOBAL" 
-    Depending on the location of the folder on your disk.
-    
-    For macOS add path from setting without slash at the end. The path should be something like this:
-    path_from_ads_settings = r"/Users/YOUR_NICKNAME/Library/Application Support/adspower_global/cwd_global/source" 
-    Depending on the location of the folder on your disk and your nickname.
-    '''
-
-    path_from_ads_settings = r"h:\.ADSPOWER_GLOBAL"  # Add path WITHOUT SLASH AT THE END (ДОБАВИТЬ БЕЗ СЛЭША НА КОНЦЕ)
-    # ==================================================================================================================
-
-    cache_folder_exist()
+    path_from_ads_settings = path_to_ads_folder()
+    if path_from_ads_settings is None:
+        cprint(f'Adspower не установлен/Не найден путь. Обратитесь к разрабочику', 'red')
+        sys.exit(0)
+    if cache_folder_exist() == 0:
+        cprint(f'Папка /Cache/ не была обнаружена. Обратитесь к разрабочику', 'red')
+        sys.exit(0)
 
     line_control("id_users.txt")
     with open("id_users.txt", "r") as f:
@@ -95,7 +110,7 @@ if __name__ == '__main__':
         except Exception as ex:
             traceback.print_exc()
             time.sleep(.3)
-            cprint(f'Unexpected error. Обратитесь к разработчику.', 'red')
+            cprint(f'{i}. < {ads_id} >  Unexpected error. Обратитесь к разработчику.', 'red')
 
 # ======================================================================================================================
 # Created by Desti
