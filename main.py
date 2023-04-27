@@ -162,12 +162,35 @@ def line_control(file_txt):
             n_f1.writelines(non_empty_lines)
 
 
+def show_test_networks(driver):
+    try:
+        xpath = '/html/body/div[1]/div/div[3]/div/div[2]/div[2]/div[2]/div[7]/div[2]/div/label'
+        driver.get('chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html#settings/advanced')
+        el_toggle = driver.find_element(By.XPATH, xpath)
+        ActionChains(driver).move_to_element(el_toggle).perform()
+        clickOnXpath(driver, 5, xpath)
+    except Exception:
+        cprint(f'< {ads_id} > test networks not added', 'white')
+
+
 def add_network(driver, name_network):
+
+    def info_panel_closer(await_time):
+        # Закрытие панели после добавления сети
+        try:
+            time.sleep(.5)
+            WebDriverWait(driver, await_time).until(EC.element_to_be_clickable((By.XPATH, XPATH_POPOVER_CLOSE)))  # krestik btn
+            time.sleep(.5)
+            driver.find_element(By.XPATH, XPATH_POPOVER_CLOSE).click()
+            time.sleep(.5)
+        except Exception:
+            pass
 
     try:
         xpatch = '/html/body/div[1]/div/div[3]/div/div[2]/div[2]/div/div[2]/div/div[2]/div'
 
         driver.get('chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html#settings/networks/add-network')
+        info_panel_closer(.7)
         inputTextXpath(driver, 5, networks[name_network]['net_name'], f'{xpatch}[1]/label/input')  # name
         inputTextXpath(driver, 5, networks[name_network]['rpc'], f'{xpatch}[2]/label/input')       # new_rpc
         inputTextXpath(driver, 5, networks[name_network]['chain_id'], f'{xpatch}[3]/label/input')  # chain
@@ -189,14 +212,7 @@ def add_network(driver, name_network):
                 q += 1
                 if q >= 6:
                     raise
-        try:
-            time.sleep(.8)
-            waitElementXpath(driver, 3, XPATH_POPOVER_CLOSE)  # krestik btn
-            time.sleep(.8)
-            clickOnXpath(driver, 3, XPATH_POPOVER_CLOSE)    # krestik btn click
-            time.sleep(.5)
-        except Exception:
-            pass
+        info_panel_closer(2)
     except Exception:
         cprint(f'network < {name_network} > network not added', 'white')
 
@@ -239,7 +255,7 @@ def onboard_page(driver, seed, password):
 
     # =================================== if you don't need to add a networks, comment everything below ================
     waitElementXpath(driver, 7, XPATH_ETH_DISPLAYED)                # wait_elem ETH display
-
+    show_test_networks(driver)                                      # Enables display of test networks
     add_network(driver, 'BSC')
     add_network(driver, 'Polygon')
     add_network(driver, 'Optimism')
@@ -321,11 +337,11 @@ def main(zero, ads_id, seed, password, unlock_mode):
 
         url = 'chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html'
 
-        time.sleep(2)
+        time.sleep(2.3)
         driver.switch_to.new_window()
-        time.sleep(.3)
+        time.sleep(.5)
         driver.get(url)
-        time.sleep(.3)
+        time.sleep(.5)
         driver.refresh()
         time.sleep(.9)
 

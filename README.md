@@ -3,6 +3,11 @@
 ![Supports](https://img.shields.io/badge/Python-Windows%20%7C%20MacOS-brightgreen?style=flat-square)
 ![Metamask](https://img.shields.io/badge/Metamask-10.26.2-orange?style=flat-square)
 ___
+#### Изменения 27.04 commit:
+
+* Добавлена функция отображения тестовых сетей
+* Исправлен баг с незакрывающейся панелью после добавления сети
+
 #### Изменения 22.04 commit:
 
 * Добавлены новые сети
