@@ -54,6 +54,7 @@ XPATH_ONBOARDING_DONE = '//*[@data-testid="onboarding-complete-done"]'
 XPATH_PIN_EXT_NEXT = '//*[@data-testid="pin-extension-next"]'
 XPATH_PIN_EXT_DONE = '//*[@data-testid="pin-extension-done"]'
 XPATH_ETH_DISPLAYED = '//*[@data-testid="eth-overview__primary-currency"]'
+XPATH_SECONDARY_BTN = '//*[@class="button btn--rounded btn-secondary"]'
 
 # Forgot Pass Page
 XPATH_FORGOT_PASS = '//*[@class="button btn-link unlock-page__link"]'
@@ -66,6 +67,7 @@ XPATH_UNLOCK = '//*[@data-testid="unlock-submit"]'
 
 XPATH_INPUTS_MNEMONIC = '//*[@class="MuiInputBase-input MuiInput-input"]'
 XPATH_POPOVER_CLOSE = '//*[@data-testid="popover-close"]'
+XPATH_SHOW_TEST_NETWORKS = '//*[@data-testid="advanced-setting-show-testnet-conversion"]'
 
 
 networks = {
@@ -164,11 +166,12 @@ def line_control(file_txt):
 
 def show_test_networks(driver):
     try:
-        xpath = '/html/body/div[1]/div/div[3]/div/div[2]/div[2]/div[2]/div[7]/div[2]/div/label'
         driver.get('chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html#settings/advanced')
-        el_toggle = driver.find_element(By.XPATH, xpath)
-        ActionChains(driver).move_to_element(el_toggle).perform()
-        clickOnXpath(driver, 5, xpath)
+        waitElementXpath(driver, 1.5, XPATH_SHOW_TEST_NETWORKS)
+        el_1 = driver.find_elements(By.XPATH, XPATH_SHOW_TEST_NETWORKS)
+        ActionChains(driver).move_to_element(el_1[0]).perform()
+        el_toggle = el_1[1].find_elements(By.XPATH, "*")
+        el_toggle[1].click()
     except Exception:
         cprint(f'< {ads_id} > test networks not added', 'white')
 
@@ -267,6 +270,12 @@ def onboard_page(driver, seed, password):
     add_network(driver, 'Fantom')
     add_network(driver, 'Aurora')
     # ==================================================================================================================
+
+    # For Metamask 10.29.0
+    try:
+        clickOnXpath(driver, 0.7, XPATH_SECONDARY_BTN)              # Dismiss button
+    except Exception:
+        pass
     # ##################################################################################################################
 
 
@@ -356,6 +365,12 @@ def main(zero, ads_id, seed, password, unlock_mode):
             elif unlock_mode == 1:
                 inputTextXpath(driver, 5, password, XPATH_INPUT_UNLOCK_PASS)
                 clickOnXpath(driver, 5, XPATH_UNLOCK)
+
+        try:
+            for q in range(3):
+                clickOnXpath(driver, 2, XPATH_POPOVER_CLOSE)                     # Close popover windows
+        except Exception:
+            pass
         # ==============================================================================================================
 
         if unlock_mode == 0:
